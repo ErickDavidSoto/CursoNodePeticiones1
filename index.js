@@ -29,8 +29,14 @@ const main  = async () => {
                 const lugares = await busquedas.ciudad (lugar);
                 //listo ciudades con esos nombres
                 const id = await listarLugares(lugares);
+                if(id === '0') continue;
+                             
+
                 //selecciono una ciudad
                 const lugarselec = lugares.find( l => l[0] === id);
+
+                //Guardar en db
+                busquedas.agregarHistorial(lugarselec[1]);
 
                 //busco el clima
                 const tiempo = await busquedas.climaLugar(lugarselec[2],lugarselec[3]);
@@ -48,6 +54,11 @@ const main  = async () => {
             break;
 
             case 2:
+
+                busquedas.historial.forEach( (lugar,i) =>{
+                    const idx = `${i+1}.`.green;
+                    console.log(`${idx} ${lugar}`);
+                })
             break;
 
             case 3:
