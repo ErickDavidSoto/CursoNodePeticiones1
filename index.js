@@ -4,7 +4,8 @@ const { inquirerMenu,
     leerInput,
     listadoTareasBorrar,
     confirmar,
-    mostrarListadoChecklist
+    mostrarListadoChecklist,
+    listarLugares
 } = require('./helpers/inquirer');
 const Busquedas = require('./models/busquedas');
 
@@ -22,19 +23,28 @@ const main  = async () => {
         switch (opt) {
             case 1:
                 // Mostrar mensaje
+                //Busco la ciudad
                 const lugar = await leerInput('Ciudad:');
+                //mBusco la ciudad
                 const lugares = await busquedas.ciudad (lugar);
-                console.log(lugares);
-                //Buscar los Lugares
+                //listo ciudades con esos nombres
+                const id = await listarLugares(lugares);
+                //selecciono una ciudad
+                const lugarselec = lugares.find( l => l[0] === id);
 
+                //busco el clima
+                const tiempo = await busquedas.climaLugar(lugarselec[2],lugarselec[3]);
+                console.log(tiempo);
                 //Mostrar Resultados
                 console.log ('\nInformacion de la ciudad\n'.green);
-                console.log('Ciudad:',)
-                console.log('Lat:',)
-                console.log('Long:',)
-                console.log('Temperatura:',)
-                console.log('Minima:',)
-                console.log('Maxima:',)
+                console.log('Ciudad:',lugarselec[1]);
+                console.log('Lat:',lugarselec[2]);
+                console.log('Long:',lugarselec[3]);
+                console.log('Temperatura:',tiempo.max);
+                console.log('Minima:',tiempo.min);
+                console.log('Maxima:',tiempo.temp);
+                console.log('Como está el clima:',  tiempo.desc.green );
+
             break;
 
             case 2:

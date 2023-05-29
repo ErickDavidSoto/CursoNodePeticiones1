@@ -15,7 +15,7 @@ class Busquedas {
 
     async ciudad( lugar = '' ) {
        
-        let test =[];
+        let ciudad =[];
 
         try {
 
@@ -23,12 +23,12 @@ class Busquedas {
             {
                 params : {
                     'access_token': process.env.MAPBOX_KEY,
-                    'limit': 1,
+                    'limit': 3,
                     'language': 'es'
                 }    
             }).then(response =>{
                 
-              test =  response.data.features.map( lugar => {
+                ciudad =  response.data.features.map( lugar => {
                     return [lugar.id ,lugar.place_name,lugar.center[0],lugar.center[1]];
                 });
                 
@@ -41,9 +41,55 @@ class Busquedas {
             throw error
         }
 
-        return test;
+        return ciudad;
     }
 
+ 
+    async climaLugar (lat,lon) {
+        let clima = []
+        try {
+
+            console.log('entro al clima');
+            await axios.get("https://api.openweathermap.org/data/2.5/weather?",
+            {
+                params : {
+                    lat,
+                    lon,
+                    'appid':process.env.OPENWEATHER_KEY,//'f369635965b00ad16ced5da4da4b9f3b',
+                    'lang': 'es',
+                    units: 'metric'                   
+                }    
+            })
+            .then(response =>{
+                
+                const { weather, main } = response.data;
+ 
+                const objeto = {
+                    desc: weather[0].description,
+                    min: main.temp_min,
+                    max: main.temp_max,
+                    temp: main.temp
+                }
+                 
+                clima = objeto;
+                // clima = response.data(tiempo =>{
+                //     return [tiempo.weather[0].description,
+                //             tiempo.main[2],
+                //             tiempo.main[3],
+                //             tiempo.temp[0]]
+                //});
+            })
+            .catch(error=>{
+                console.log(error);
+            });
+            
+        } catch (error) {
+            console.log(error)
+        }
+
+        return clima;
+  
+    }
     
     async token ( usuario = '', clave = '') {
         let token =''
@@ -80,8 +126,6 @@ class Busquedas {
     }
 
     async marca ( token = '') {
-
-
 
         try {
 
